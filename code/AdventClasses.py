@@ -105,3 +105,95 @@ class Passport:
     def validate_and_set_cid(self, cid):
 
         self.fields['cid'] = cid
+
+
+
+# This class is used in days: {8} 
+class Handheld:
+
+    def __init__(self):
+
+        self.programm = None # puzzle input
+        self.instruction = None
+        self.operation = None
+        self.argument = None
+        self.accumulator = 0
+        self.programm_pointer = -1
+        self.infinite_loop_detected = False
+        self.stopping_condition = False
+        
+        self.executed_lines = set() 
+        
+        self.operation_fct = {'acc': self.acc,
+                            'jmp': self.jmp,
+                            'nop': self.nop}
+
+    def read_programm(self, programm):
+        self.programm = programm
+
+    # increment pointer unless we came from a jump instruction (we allready jumped to a new line)
+    def increment_programm_pointer(self):
+        if self.operation != 'jmp':
+            self.programm_pointer += 1
+        else: 
+            # The programm pointer was changed inside "jmp" function thus allready updated
+            pass 
+        
+
+    # reads the instruction from the current line of the programm
+    def read_instruction(self):
+        
+        if self.check_infinite_loop() == False:
+            
+            # read the current instruction of the programm
+            self.instruction = self.programm[self.programm_pointer]
+
+            [op, arg] = self.instruction.split(' ')
+            self.operation = op
+            self.argument  = int(arg)
+
+            # to detect infinite loops safe the programm lines in a set
+            self.executed_lines.add(str(self.programm_pointer))
+            
+        else: 
+            print('Programm ran into infinite loop, Accumlator value: ', self.accumulator)
+            self.infinite_loop_detected = True
+
+        # the pointer, instructions and acc valid for the current loop is displayes
+        print('pointer: ', self.programm_pointer, 'acc: ', self.accumulator, 'instruction: ', self.instruction)
+
+
+
+    def execute_instruction(self):
+
+        if self.infinite_loop_detected == True:
+            # the programm loop will be stopped with the condition below, 
+            # that way we can chose to use other criteria to stop the loop other than infinite loop
+            self.stopping_condition = True
+            pass
+        else:
+            self.operation_fct[self.operation]() 
+
+    def check_infinite_loop(self):
+        
+        set_current_line = {str(self.programm_pointer)} # NOTE: conversion with set() does not work for strings with multiple characters somehow..
+
+        # check if we have seen the line of instruction before
+        if set_current_line.intersection(self.executed_lines):
+            return True 
+        else: 
+            return False 
+
+    # increase or decrease the accumulator by the current argument
+    def acc(self):
+        self.accumulator += self.argument
+
+    # jumps to a new instruction relative to itself. 
+    # The next instruction to execute is found using the argument as an offset
+    def jmp(self):
+
+        self.programm_pointer += self.argument    
+
+    # Do not do anythin, continue with next line
+    def nop(self):
+        pass
