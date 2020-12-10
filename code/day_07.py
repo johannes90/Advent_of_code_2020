@@ -15,5 +15,5 @@ text_file.close()
 #   -> 3a:find every parent nodes in the set of rules (tree/graphs tuples)
 #   -> 3b: for every parent node repeat 3 -> new parents nodes 
 #       -> repeat again and again until we don't have any more parent nodes (-> maybe recursion is smart ?)
-
+#       -> or other childs are a shiny gold bag 
 print(1)

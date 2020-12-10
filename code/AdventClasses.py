@@ -113,13 +113,13 @@ class Handheld:
 
     def __init__(self):
 
-        self.programm = None # puzzle input
-        self.instruction = None
-        self.operation = None
-        self.argument = None
-        self.accumulator = 0
-        self.programm_pointer = -1
-        self.infinite_loop_detected = False
+        self.programm          = None # a series of instructions for the handheld (= puzzle input)
+        self.instruction       = None # the instruction is a single line from the programm 
+        self.operation         = None # first part of instruction: 'acc', 'jmp' or 'nop'
+        self.argument          = None # value for the execution of operation
+        self.accumulator       = 0    # accumulator value is set by operation 'acc'
+        self.programm_pointer  = -1   #
+        self.inf_loop_detected = False
         self.stopping_condition = False
         
         self.executed_lines = set() 
@@ -157,16 +157,14 @@ class Handheld:
             
         else: 
             print('Programm ran into infinite loop, Accumlator value: ', self.accumulator)
-            self.infinite_loop_detected = True
+            self.inf_loop_detected = True
 
         # the pointer, instructions and acc valid for the current loop is displayes
-        print('pointer: ', self.programm_pointer, 'acc: ', self.accumulator, 'instruction: ', self.instruction)
-
-
+        #print('pointer=', self.programm_pointer, 'acc=', self.accumulator, 'instruction=', self.instruction)
 
     def execute_instruction(self):
 
-        if self.infinite_loop_detected == True:
+        if self.inf_loop_detected == True:
             # the programm loop will be stopped with the condition below, 
             # that way we can chose to use other criteria to stop the loop other than infinite loop
             self.stopping_condition = True
