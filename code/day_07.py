@@ -41,13 +41,13 @@ for line in rules:
     BAGS.append(Bag(parent, children))
 
 #  Test: Parsing 
-# for idx, bag in enumerate(BAGS): 
-#     print('{} {} {} {}'.format(idx, bag.color, bag.children['color'], bag.children['quantity']) ) 
-# print()
+for idx, bag in enumerate(BAGS): 
+    print('{} {} {} {}'.format(idx, bag.color, bag.children['color'], bag.children['quantity']) ) 
+print()
 def find_parents(bags: list, children: str):
 
     if type(children) == str:
-        child = [child] 
+        children = [children] 
     parents = set()
 
     for c in children: 
@@ -58,7 +58,7 @@ def find_parents(bags: list, children: str):
     return parents
 
 # Test: find parents for 
-#parents_of_muted_yellow = find_parents(BAGS, 'muted yellow')
+parents_of_muted_yellow = find_parents(BAGS, 'muted yellow')
 
 # bags = all bags we search the parents
 # child = shiny gold at beginning, then next parent of shiny gold and so on
