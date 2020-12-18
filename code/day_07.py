@@ -37,14 +37,6 @@ class Bag:
         self.color    = color    # parent bag
         self.children = children # contained children bags
 
-child1 = Children('blue', 1)
-child2 = Children(['blue', 'green'], [2, 3])
-
-
-child3 = Children([], [])
-child3.extend(child1)
-child3.extend(child2)
-print()
 
 # 1,2: parsing, build graph  
 BAGS = []
@@ -75,9 +67,9 @@ for line in rules:
     BAGS.append(Bag(parent, children))
 
 #  Test: Parsing 
-for idx, bag in enumerate(BAGS): 
-    print('{} {} {} {}'.format(idx, bag.color, bag.children.colors, bag.children.quantities) ) 
-print()
+# for idx, bag in enumerate(BAGS): 
+#     print('{} {} {} {}'.format(idx, bag.color, bag.children.colors, bag.children.quantities) ) 
+# print()
 def find_parents(bags: list, children: str):
 
     if type(children) == str:
@@ -111,7 +103,7 @@ ALL_PARRENTS = find_all_parents(BAGS, 'shiny gold', set())
 """
     Solution Part A
 """
-print("{} bags can eventually contain a shiny gold bag".format(len(ALL_PARRENTS)))
+print("{} bags can eventually contain a shiny gold bag(solution part A)".format(len(ALL_PARRENTS)))
 
 """ 
     Part: B
@@ -149,7 +141,6 @@ vibrant_plum_children = find_children(BAGS, 'vibrant plum') # NOTE: works
 shiny_gold_children = find_children(BAGS, 'shiny gold') # NOTE: works
 dotted_black_children = find_children(BAGS, 'dotted black') # NOTE: works
 
-print("Test: vibrant plum contains {}".format(vibrant_plum_children) )
 
 def find_all_children(bags, parents, all_children):
 
@@ -172,4 +163,4 @@ number_of_children = shiny_gold_all_children.quantities
 sol = 0
 for number in number_of_children:
     sol += number
-print('Solution: {}'.format(sol)) #465 to low 1469 
+print('Solution Part B: {}'.format(sol))  
