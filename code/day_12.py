@@ -1,5 +1,4 @@
 data_string = "day_12_input.txt"
-import copy
 
 text_file = open(data_string, "r")
 raw_input = text_file.read()
