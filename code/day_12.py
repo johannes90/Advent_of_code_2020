@@ -91,3 +91,75 @@ ship.execute_instructions()
 
 print(ship.compute_dist(ORIGIN, ship.position, MANHATTEN))
 
+# Inherite Ship class
+class Ship_B():
+    
+    def __init__(self, instructions):
+    
+        self.instructions = instructions
+
+        NUM_INSTR = len(self.instructions)
+
+        self.position    = ORIGIN
+
+    # defined relative to ship position
+        self.waypoint = 10 + 1j
+
+    def execute_instructions(self):
+
+        for idx, instr in enumerate(self.instructions):
+
+            action = instr['action']
+            value  = instr['value']
+
+            if action in ROT:
+                self.rotate_waypoint(action, value)
+
+            elif action in TRANS and action != FORWARD:
+                self.translate_waypoint(action, value)
+
+            elif action == FORWARD:
+                self.translate_ship(value)
+
+            else: 
+                raise(ValueError)
+
+            print('instructions in step {} = {},{} -> pos=={}, wp ={}'.format(idx, action, value, self.position, self.waypoint))
+            print()
+
+    def rotate_waypoint(self, action, value):
+
+        if value%90 == 0:
+            value = value/90
+        else:
+            raise(ValueError)
+
+        self.waypoint = self.waypoint*ROT[action]**value
+    
+    def translate_waypoint(self, action, value):
+
+        if action in {NORTH, EAST, SOUTH, WEST}:
+            # Move in current direction of current direction
+            self.waypoint = self.waypoint + DIRECTION[action]*value
+        else:
+            raise(ValueError) 
+
+    def translate_ship(self, value):
+
+        # move ship value times in direction of waypoint
+        self.position = self.position + value*self.waypoint
+
+        # NOTE: not update the waypoint relative to ship
+        
+
+    def compute_dist(self, pos_A, pos_B, type):
+
+        if type == MANHATTEN:
+            dist = pos_B - pos_A 
+            return abs(dist.real) + abs(dist.imag)
+
+ship = Ship_B(instructions)
+
+ship.execute_instructions()   
+
+print(ship.compute_dist(ORIGIN, ship.position, MANHATTEN))
