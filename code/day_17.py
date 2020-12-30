@@ -8,7 +8,7 @@ text_file = open(data_string, "r")
 state = text_file.read()
 space = state.split('\n')
 
-Ndim = 3
+Ndim = 4
 # cube status
 ACTIVE   = '#'
 
@@ -113,9 +113,11 @@ def print_2D_slice(cubes, z0, gridsize):
 # TODO: utilize fact that the cubes would change in +z/-z direction the same  
 for i_cycle in range(NUM_CYCLES):
 
-    # Loop through al cubes in the map
     inactive = set()
     new_activ = set()
+    potentially_new = set()
+
+    # Loop through al cubes in the map
     for cube in cubes:
         # check if neighbours exist
         neighbours = get_neighbour_coord_ND(cube)
@@ -124,25 +126,24 @@ for i_cycle in range(NUM_CYCLES):
         active_neighbours = neighbours.intersection(cubes)
         active_neighbours_count = len(active_neighbours)
         
-        # If a cube is active and exactly 2 or 3 of its neighbors are also active, the cube remains active. 
-        # Otherwise, the cube becomes inactive. (active = existent cube)
         if (active_neighbours_count != 2 and active_neighbours_count != 3):
             #cubes.remove(cube)
             inactive.add(cube)
 
         # candidates for new active cubes are those neighbours that are not allready a cube
-        potentially_new = neighbours.difference(cubes)
+        potentially_new = potentially_new.union(neighbours.difference(cubes))
         
-        # If a cube is inactive but exactly 3 of its neighbors are active, the cube becomes active. 
-        # Otherwise, the cube remains inactive.  (inactive = new cube)
-        for neighbour in potentially_new:
-            neighbours_neighbour = get_neighbour_coord_ND(neighbour)
-            Num_active_of_inactive = len(neighbours_neighbour.intersection(cubes))
+    # If a cube is inactive but exactly 3 of its neighbors are active, the cube becomes active. 
+    # Otherwise, the cube remains inactive.  (inactive = new cube)
+    for neighbour in potentially_new:
+        
+        neighbours_neighbour = get_neighbour_coord_ND(neighbour)
+        Num_active_of_inactive = len(neighbours_neighbour.intersection(cubes))
 
-            if Num_active_of_inactive == 3:
-                #cubes.add(neighbour)
-                new_activ.add(neighbour)
-                #print('new cube: ',neighbour)
+        if Num_active_of_inactive == 3:
+            #cubes.add(neighbour)
+            new_activ.add(neighbour)
+            #print('new cube: ',neighbour)
     
     # Remove cubes are inactive
     cubes = cubes.difference(inactive)
