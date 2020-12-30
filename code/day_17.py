@@ -2,7 +2,7 @@ import time
 import re
 import copy
 import itertools
-data_string = "day_17_input_test.txt"
+data_string = "day_17_input.txt"
 
 text_file = open(data_string, "r")
 state = text_file.read()
@@ -44,7 +44,7 @@ elif Ndim == 4:
 NUM_CYCLES = 6
 
 t0 = time.time()
-# Simulate 6 cycles of chaning cubes TODO: add NDim as input for higher dim data to omit certain dimensions
+# Simulate 6 cycles of chaning cubes 
 def get_neighbour_coord_ND(coordinates):
     # coordinates x1, x2, x3, ... xi i = N DIM
     Ndim = len(coordinates)
@@ -68,7 +68,7 @@ def print_2D_slice(cubes, z0, gridsize):
     if type(cubes) == tuple:
         cs = [cubes]
     else:
-        cs = cubes#.copy() 
+        cs = cubes
 
     # Find cubes in z0-plane and max x,y coordinates of cubes in that plane
     max_x = 0 
@@ -86,10 +86,7 @@ def print_2D_slice(cubes, z0, gridsize):
                 max_y = cube[1]
             if cube[1] < min_y:
                 min_y = cube[1]
-            
-        else: 
-            pass
-            #cs.remove(cube)
+
 
     # convert cubes of z_0 plane to 2D List[List]
     z0_plane = []
@@ -115,7 +112,7 @@ for i_cycle in range(NUM_CYCLES):
 
     inactive = set()
     new_activ = set()
-    potentially_new = set()
+    potentially_new = {}
 
     # Loop through al cubes in the map
     for cube in cubes:
@@ -126,24 +123,24 @@ for i_cycle in range(NUM_CYCLES):
         active_neighbours = neighbours.intersection(cubes)
         active_neighbours_count = len(active_neighbours)
         
+        # Condition ACTIVE -> stay ACTIVE or get INACTIVE
         if (active_neighbours_count != 2 and active_neighbours_count != 3):
-            #cubes.remove(cube)
             inactive.add(cube)
 
         # candidates for new active cubes are those neighbours that are not allready a cube
-        potentially_new = potentially_new.union(neighbours.difference(cubes))
+        nn = neighbours.difference(cubes)
+        for n in nn:
+            if n in potentially_new:
+                potentially_new[n] += 1
+            else:
+                potentially_new[n] = 1
         
-    # If a cube is inactive but exactly 3 of its neighbors are active, the cube becomes active. 
-    # Otherwise, the cube remains inactive.  (inactive = new cube)
+    # Condition INACTIVE -> stay INACTIVE or get ACTIVE
     for neighbour in potentially_new:
         
-        neighbours_neighbour = get_neighbour_coord_ND(neighbour)
-        Num_active_of_inactive = len(neighbours_neighbour.intersection(cubes))
-
+        Num_active_of_inactive = potentially_new[neighbour]
         if Num_active_of_inactive == 3:
-            #cubes.add(neighbour)
             new_activ.add(neighbour)
-            #print('new cube: ',neighbour)
     
     # Remove cubes are inactive
     cubes = cubes.difference(inactive)
@@ -153,5 +150,5 @@ for i_cycle in range(NUM_CYCLES):
 
 t_delta = time.time() - t0
 
-print('Time passed: ', t_delta)
-print(len(cubes))
+print('{} cubes are active after {} cycles in {} dimensional space'.format(len(cubes), NUM_CYCLES, Ndim))
+print('Computation took {} seconds \n'.format(t_delta))
