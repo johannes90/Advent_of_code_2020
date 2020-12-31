@@ -2,20 +2,22 @@ import time
 import re
 import copy
 import itertools
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 data_string = "day_17_input.txt"
 
 text_file = open(data_string, "r")
 state = text_file.read()
 space = state.split('\n')
 
-Ndim = 4
+Ndim = 3 
 # cube status
 ACTIVE   = '#'
-
+cubes = set()
 # The initially active cubes lie in a 2D Slice of a Ndim space 
 # The space is either Ndim=3  for part 1 or Ndim=4 for part 2
 if Ndim == 3:
-    cubes = set()
     X0_width = len(space[0])
     Y0_width = len(space)
     Z0_width = 1
@@ -27,7 +29,6 @@ if Ndim == 3:
                     
                     cubes.add((x,y,z))
 elif Ndim == 4:
-    cubes = set()
     X0_width = len(space[0])
     Y0_width = len(space)
     Z0_width = 1
@@ -64,6 +65,7 @@ def get_neighbour_coord_ND(coordinates):
 
     return neighbours  
 
+# Print function for debugging
 def print_2D_slice(cubes, z0, gridsize):
     if type(cubes) == tuple:
         cs = [cubes]
@@ -96,10 +98,8 @@ def print_2D_slice(cubes, z0, gridsize):
             
             if (col+min_x, row+min_y, z0) in cs:
                 ROW.append('#')
-                #print('in cubes', col+min_x, row+min_y, z0)
             else:
                 ROW.append('.')
-                #print('not in cubes: ', col+min_x, row+min_y, z0)
 
         z0_plane.append(ROW)
         print(ROW)
@@ -116,6 +116,7 @@ for i_cycle in range(NUM_CYCLES):
 
     # Loop through al cubes in the map
     for cube in cubes:
+
         # check if neighbours exist
         neighbours = get_neighbour_coord_ND(cube)
 
@@ -148,7 +149,17 @@ for i_cycle in range(NUM_CYCLES):
     # Add new active cubes 
     cubes = cubes.union(new_activ)
 
+
 t_delta = time.time() - t0
 
 print('{} cubes are active after {} cycles in {} dimensional space'.format(len(cubes), NUM_CYCLES, Ndim))
 print('Computation took {} seconds \n'.format(t_delta))
+
+
+# Plot point cloud
+fig = plt.figure()
+ax = Axes3D(fig)
+
+ax.scatter(*zip(*cubes))
+plt.show()
+
